@@ -1,12 +1,26 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <stdio.h>  // IWYU pragma: keep
-#include <stdlib.h> // IWYU pragma: keep
+#include <stdio.h>
+#include <stdlib.h> // IWYU pragma: keep (it is used in the assert macro)
 
 // Assertation macros
-#define assert(expr) if (!(expr)) { printf("Assertion failed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); exit(1); }
-#define assert_warn(expr) if (!(expr)) { printf("Warning: %s; at %s:%d\n", #expr, __FILE__, __LINE__); }
+#if defined (debug) && !defined (release)
+    #ifdef ASSERT_PARANOID
+        #define assert(expr) \
+            if (!(expr)) { fprintf(stderr, "Assertion failed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); exit(1); } \
+            else { printf("Assertion passed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); }
+        #define assert_warn(expr) \
+            if (!(expr)) { printf("Warning: %s; at %s:%d\n", #expr, __FILE__, __LINE__); } \
+            else { printf("Warning passed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); }
+    #else
+        #define assert(expr) if (!(expr)) { fprintf(stderr, "Assertion failed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); exit(1); }
+        #define assert_warn(expr) if (!(expr)) { printf("Warning: %s; at %s:%d\n", #expr, __FILE__, __LINE__); }
+    #endif
+#else
+    #define assert(expr)
+    #define assert_warn(expr)
+#endif
 
 // Math macros
 #define min(a, b) ((a) < (b) ? (a) : (b))
