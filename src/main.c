@@ -35,9 +35,10 @@ int main(int argc, char** argv) {
     // Read the file into the string
     int lineIndex = 1;
     while (fgets((str->c_str) + (str->length), size - str->length, file)) {
+        // The linecounting is used to emit the \0 terminators
+        // that fgets adds to the end of every line.
+        // This does mean that we allocate an extra byte for every line.
         str->length = ftell(file) - (lineIndex++);
-        if (str->length == size - 1)
-            break;
     }
     str->c_str[size] = '\0';
     fclose(file);
@@ -45,14 +46,19 @@ int main(int argc, char** argv) {
     // Split the string into lines
     array(string_view)* lines = string_view_split(&str->as_view, '\n');
 
-    // Print the lines
+    // Print the lines that are not empty or comments
     string_view comment = const_str("#");
+    string_view header  = const_str("@");
 
     foreach(i, lines) {
-        if (lines->data[i].length == 0 ||
-            string_view_starts_with(&lines->data[i], &comment)
-        ) {
+        if (lines->data[i].length == 0) {
             continue;
+        } else if (string_view_starts_with(&lines->data[i], &comment)) {
+            printf("\033[0;94m"); // Blue
+        } else if (string_view_starts_with(&lines->data[i], &header)) {
+            printf("\033[0;32m");  // Green
+        } else {
+            printf("\033[0m");     // Reset
         }
 
         uint16_t len = lines->data[i].length;
@@ -60,8 +66,14 @@ int main(int argc, char** argv) {
         printf("%.*s\n", len, c_str);
     }
 
+    // Wait for user input
+    // I put this before the free calls so I can check the memory usage
+    printf("\nPress enter to exit...");
+    while (getchar() != '\n');
+
     // Free the lines and the string
     array_free(lines);
     string_free(str); 
+
     return 0;
 }
