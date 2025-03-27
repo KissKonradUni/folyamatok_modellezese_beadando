@@ -1,7 +1,7 @@
 # The jobs are defined as follows:
 # ID;Operations; -> Where operations are separated by spaces
 @Jobs
-0;0,1,2;
+0;0 1 2;
 1;1 2;
 2;1 2;
 
@@ -13,7 +13,7 @@
 
 # Operations are defined as follows:
 # ID;Time;Stations; -> Where every usable station is separated by spaces
-@Operation
+@Operations
 0;1;0 1 2;
 1;2;1 2;
 2;3;0 1;
@@ -26,7 +26,7 @@
 
 # Stations are defined as follows:
 # ID;Capacity;Available from-to; -> Where capacity is how many operations can wait for that station
-@Station
+@Stations
 0;2;8-20;
 1;2;10-20;
 2;2;12-20;

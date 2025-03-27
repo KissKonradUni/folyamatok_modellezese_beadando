@@ -1,5 +1,6 @@
 #include "file.h"
 
+#include <string.h>
 #include <unistd.h>
 
 string* get_cwd_str() {
