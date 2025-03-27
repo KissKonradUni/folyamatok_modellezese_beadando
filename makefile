@@ -1,11 +1,11 @@
 PROJECT_NAME = simulator
 
 CC = clang
-CFLAGS = -Wall -Wextra -std=c99
+CFLAGS = -Wall -Wextra -std=c23
 
 MODE?=debug
-DEBUGFLAGS = -g -O0
-RELEASEFLAGS = -O3 -lto
+DEBUGFLAGS = -g -O0 -Ddebug
+RELEASEFLAGS = -O3 -lto -Drelease
 
 ifeq ($(MODE),debug)
 	CFLAGS += $(DEBUGFLAGS)
