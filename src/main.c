@@ -1,7 +1,13 @@
 #include <unistd.h>
 
+#include "file.h"
 #include "array.h"
 #include "mystring.h"
+
+// Constants
+const string_view filename = const_str("test.sim");
+const string_view comment  = const_str("#");
+const string_view header   = const_str("@");
 
 int main(int argc, char** argv) {
     // Print parameters
@@ -11,51 +17,21 @@ int main(int argc, char** argv) {
     }
     printf("\n");
 
-    // Get working directory
-    char cwd[PATH_MAX];
-    getcwd(cwd, sizeof(cwd));
-    printf("Working directory: %s\n", cwd);
+    // Get full file path
+    string* path = get_cwd_str();
+    concat_str_path(path, &filename);
+    printf("File path: %s\n", path->c_str);
 
-    string* file_path = string_new(128);
-    string_format(&file_path, "%s%c%s", cwd, PATH_DELIMITER, "test.sim");
-    printf("File path: %s\n", file_path->c_str);
-
-    // Open file
-    FILE* file = fopen(file_path->c_str, "r");
+    // Read file
+    FILE* file = fopen(path->c_str, "r");
     assert(file != NULL);
-
-    // Get the size of the file
-    fseek(file, 0, SEEK_END);
-    size_t size = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
-    // Create a string with the size of the file
-    string* str = string_new(size);
-
-    // Read the file into the string
-    ON_WINDOWS(int lineIndex = 1;); // This variable is only used on Windows
-    while (fgets((str->c_str) + (str->length), size - str->length, file)) {
-        // The linecounting is used to emit the \0 terminators
-        // that fgets adds to the end of every line.
-        // This does mean that we allocate an extra byte for every line.
-        ON_WINDOWS(
-            str->length = ftell(file) - (lineIndex++);
-        );
-        ON_UNIX(
-            str->length = ftell(file);
-            if (str->length >= size - 1) break;
-        );
-    }
-    str->c_str[size] = '\0';
+    string* str = read_all_lines(file);
     fclose(file);
 
     // Split the string into lines
     array(string_view)* lines = string_view_split(&str->as_view, '\n');
 
-    // Print the lines that are not empty or comments
-    string_view comment = const_str("#");
-    string_view header  = const_str("@");
-
+    // Print the lines that are not empty
     foreach(i, lines) {
         if (lines->data[i].length == 0) {
             continue;
@@ -79,7 +55,8 @@ int main(int argc, char** argv) {
 
     // Free the lines and the string
     array_free(lines);
-    string_free(str); 
+    string_free(str);
+    string_free(path);
 
     return 0;
 }

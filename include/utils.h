@@ -1,22 +1,13 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <stdio.h>
+#include <stdio.h>  // IWYU pragma: keep (it is used in the assert macro)
 #include <stdlib.h> // IWYU pragma: keep (it is used in the assert macro)
 
 // Assertation macros
 #if defined (debug) && !defined (release)
-    #ifdef ASSERT_PARANOID
-        #define assert(expr) \
-            if (!(expr)) { fprintf(stderr, "Assertion failed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); exit(1); } \
-            else { printf("Assertion passed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); }
-        #define assert_warn(expr) \
-            if (!(expr)) { printf("Warning: %s; at %s:%d\n", #expr, __FILE__, __LINE__); } \
-            else { printf("Warning passed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); }
-    #else
-        #define assert(expr) if (!(expr)) { fprintf(stderr, "Assertion failed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); exit(1); }
-        #define assert_warn(expr) if (!(expr)) { printf("Warning: %s; at %s:%d\n", #expr, __FILE__, __LINE__); }
-    #endif
+    #define assert(expr) if (!(expr)) { fprintf(stderr, "Assertion failed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); exit(1); }
+    #define assert_warn(expr) if (!(expr)) { printf("Warning: %s; at %s:%d\n", #expr, __FILE__, __LINE__); }
 #else
     #define assert(expr)
     #define assert_warn(expr)
@@ -38,11 +29,16 @@
 // Platform macros
 #ifdef _WIN32
     #define PATH_DELIMITER '\\'
+    #define PATH_DELIMITER_STR "\\"
+
+    // Windows has a PATH_MAX
 
     #define ON_WINDOWS(expression) expression
     #define ON_UNIX(expression)
 #else
     #define PATH_DELIMITER '/'
+    #define PATH_DELIMITER_STR "/"
+
     #define PATH_MAX 4096
 
     #define ON_WINDOWS(expression)

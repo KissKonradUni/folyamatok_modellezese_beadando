@@ -54,7 +54,7 @@ void string_append_char(string** str_ref, char c) {
     str->c_str[str->length] = '\0';
 }
 
-void string_append_cstr(string** str_ref, char* cstring) {
+void string_append_cstr(string** str_ref, const char* cstring) {
     string* str = *str_ref;
     assert(str != NULL);
 
@@ -68,21 +68,21 @@ void string_append_cstr(string** str_ref, char* cstring) {
     str->c_str[str->length] = '\0';
 }
 
-void string_append(string** str_ref, string* other) {
+void string_append_view(string** str_ref, const string_view* view) {
     assert(*str_ref != NULL);
-    assert(other != NULL);
+    assert(view != NULL);
 
     string* str = *str_ref;
-    if (str->capacity < str->length + other->length) {
-        string_resize(str_ref, str->length + other->length + 2);
+    if (str->capacity < str->length + view->length) {
+        string_resize(str_ref, str->length + view->length + 2);
         str = *str_ref;
     }
-    memcpy(str->c_str + str->length, other->c_str, other->length);
-    str->length += other->length;
+    memcpy(str->c_str + str->length, view->c_str, view->length);
+    str->length += view->length;
     str->c_str[str->length] = '\0';
 }
 
-void string_format(string** str_ref, char* format, ...) {
+void string_format(string** str_ref, const char* format, ...) {
     va_list args;
     va_start(args, format);
     uint32_t min_capacity = vsnprintf(NULL, 0, format, args) + 1;
@@ -101,7 +101,16 @@ void string_format(string** str_ref, char* format, ...) {
     assert_warn(result >= 0);
 }
 
-string_view* string_view_new(string* str, uint16_t start, uint16_t end) {
+string* string_clone(string* str) {
+    assert(str != NULL);
+
+    string* clone = string_new(str->capacity);
+    memcpy(clone->c_str, str->c_str, str->length);
+    clone->length = str->length;
+    return clone;
+}
+
+string_view* string_view_new(const string* str, uint16_t start, uint16_t end) {
     assert(str != NULL);
     assert(start < end);
     assert(end <= str->length);
@@ -118,28 +127,28 @@ void string_view_free(string_view* view) {
     free(view);
 }
 
-bool string_view_starts_with(string_view* str, string_view* start) {
+bool string_view_starts_with(const string_view* str, const string_view* start) {
     assert(str != NULL);
     assert(start != NULL);
 
     return memcmp(str->c_str, start->c_str, start->length) == 0;
 }
 
-bool string_view_ends_with(string_view* str, string_view* end) {
+bool string_view_ends_with(const string_view* str, const string_view* end) {
     assert(str != NULL);
     assert(end != NULL);
 
     return memcmp(str->c_str + str->length - end->length, end->c_str, end->length) == 0;
 }
 
-bool string_view_equals(string_view* str, string_view* other) {
+bool string_view_equals(const string_view* str, const string_view* other) {
     assert(str != NULL);
     assert(other != NULL);
 
     return str->length == other->length && memcmp(str->c_str, other->c_str, str->length) == 0;
 }
 
-array(string_view)* string_view_split(string_view* str, char delim) {
+array(string_view)* string_view_split(const string_view* str, char delim) {
     assert(str != NULL);
 
     uint16_t parts = 1;
