@@ -33,12 +33,18 @@ int main(int argc, char** argv) {
     string* str = string_new(size);
 
     // Read the file into the string
-    int lineIndex = 1;
+    ON_WINDOWS(int lineIndex = 1;); // This variable is only used on Windows
     while (fgets((str->c_str) + (str->length), size - str->length, file)) {
         // The linecounting is used to emit the \0 terminators
         // that fgets adds to the end of every line.
         // This does mean that we allocate an extra byte for every line.
-        str->length = ftell(file) - (lineIndex++);
+        ON_WINDOWS(
+            str->length = ftell(file) - (lineIndex++);
+        );
+        ON_UNIX(
+            str->length = ftell(file);
+            if (str->length >= size - 1) break;
+        );
     }
     str->c_str[size] = '\0';
     fclose(file);

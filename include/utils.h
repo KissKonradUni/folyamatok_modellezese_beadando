@@ -38,8 +38,15 @@
 // Platform macros
 #ifdef _WIN32
     #define PATH_DELIMITER '\\'
+
+    #define ON_WINDOWS(expression) expression
+    #define ON_UNIX(expression)
 #else
     #define PATH_DELIMITER '/'
+    #define PATH_MAX 4096
+
+    #define ON_WINDOWS(expression)
+    #define ON_UNIX(expression) expression
 #endif
 
 #endif // UTILS_H
