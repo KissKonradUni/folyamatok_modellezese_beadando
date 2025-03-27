@@ -30,4 +30,16 @@
 // Memory macros
 #define swap(a, b) { typeof(a) tmp = a; a = b; b = tmp; }
 
+// Boolean macros
+#define bool uint8_t
+#define true 1
+#define false 0
+
+// Platform macros
+#ifdef _WIN32
+    #define PATH_DELIMITER '\\'
+#else
+    #define PATH_DELIMITER '/'
+#endif
+
 #endif // UTILS_H

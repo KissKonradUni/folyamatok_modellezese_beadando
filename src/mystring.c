@@ -14,10 +14,11 @@ string* string_new(uint16_t cap) {
     str = malloc(sizeof(string) + sizeof(char) * cap);
     assert(str != NULL);
 
+    str->local = false;
     str->capacity = cap;
     str->length = 0;
-    str->data = (typeof(str->data)) (str + 1);
-    str->data[0] = '\0';
+    str->c_str = (typeof(str->c_str)) (str + 1);
+    str->c_str[0] = '\0';
     return str;
 }
 
@@ -29,10 +30,10 @@ void string_resize(string** str_ref, uint16_t new_cap) {
 
     new_memory->capacity = new_cap;
     new_memory->length = (*str_ref)->length;
-    new_memory->data = (typeof(new_memory->data)) (new_memory + 1);
+    new_memory->c_str = (typeof(new_memory->c_str)) (new_memory + 1);
 
-    memcpy(new_memory->data, (*str_ref)->data, (*str_ref)->length);
-    new_memory->data[new_memory->length] = '\0';
+    memcpy(new_memory->c_str, (*str_ref)->c_str, (*str_ref)->length);
+    new_memory->c_str[new_memory->length] = '\0';
     free(*str_ref);
     *str_ref = new_memory;
 }
@@ -49,8 +50,8 @@ void string_append_char(string** str_ref, char c) {
         string_resize(str_ref, str->capacity * 2);
         str = *str_ref;
     }
-    str->data[str->length++] = c;
-    str->data[str->length] = '\0';
+    str->c_str[str->length++] = c;
+    str->c_str[str->length] = '\0';
 }
 
 void string_append_cstr(string** str_ref, char* cstring) {
@@ -62,9 +63,9 @@ void string_append_cstr(string** str_ref, char* cstring) {
         string_resize(str_ref, str->length + cstring_len + 2);
         str = *str_ref;
     }
-    memcpy(str->data + str->length, cstring, cstring_len);
+    memcpy(str->c_str + str->length, cstring, cstring_len);
     str->length += cstring_len;
-    str->data[str->length] = '\0';
+    str->c_str[str->length] = '\0';
 }
 
 void string_append(string** str_ref, string* other) {
@@ -76,9 +77,9 @@ void string_append(string** str_ref, string* other) {
         string_resize(str_ref, str->length + other->length + 2);
         str = *str_ref;
     }
-    memcpy(str->data + str->length, other->data, other->length);
+    memcpy(str->c_str + str->length, other->c_str, other->length);
     str->length += other->length;
-    str->data[str->length] = '\0';
+    str->c_str[str->length] = '\0';
 }
 
 void string_format(string** str_ref, char* format, ...) {
@@ -94,7 +95,7 @@ void string_format(string** str_ref, char* format, ...) {
     string_resize(str_ref, new_capacity);
 
     va_start(args, format);
-    int result = vsnprintf((*str_ref)->data, (*str_ref)->capacity, format, args);
+    int result = vsnprintf((*str_ref)->c_str, (*str_ref)->capacity, format, args);
     va_end(args);
 
     assert_warn(result >= 0);
@@ -109,7 +110,7 @@ string_view* string_view_new(string* str, uint16_t start, uint16_t end) {
     assert(view != NULL);
 
     view->length = end - start;
-    view->data = str->data + start;
+    view->c_str = str->c_str + start;
     return view;
 }
 
@@ -117,12 +118,33 @@ void string_view_free(string_view* view) {
     free(view);
 }
 
-array(string_view)* string_split(string* str, char delim) {
+bool string_view_starts_with(string_view* str, string_view* start) {
+    assert(str != NULL);
+    assert(start != NULL);
+
+    return memcmp(str->c_str, start->c_str, start->length) == 0;
+}
+
+bool string_view_ends_with(string_view* str, string_view* end) {
+    assert(str != NULL);
+    assert(end != NULL);
+
+    return memcmp(str->c_str + str->length - end->length, end->c_str, end->length) == 0;
+}
+
+bool string_view_equals(string_view* str, string_view* other) {
+    assert(str != NULL);
+    assert(other != NULL);
+
+    return str->length == other->length && memcmp(str->c_str, other->c_str, str->length) == 0;
+}
+
+array(string_view)* string_view_split(string_view* str, char delim) {
     assert(str != NULL);
 
     uint16_t parts = 1;
     for (uint16_t i = 0; i < str->length; i++) {
-        if (str->data[i] == delim) {
+        if (str->c_str[i] == delim) {
             parts++;
         }
     }
@@ -132,15 +154,16 @@ array(string_view)* string_split(string* str, char delim) {
     uint16_t end = 0;
     uint16_t part = 0;
     for (uint16_t i = 0; i < str->length; i++) {
-        if (str->data[i] == delim) {
+        if (str->c_str[i] == delim) {
             end = i;
-            result->data[part].data = (str->data) + start;
+            char* pointer = (str->c_str) + start;
+            result->data[part].c_str = pointer;
             result->data[part].length = end - start;
             part++;
             start = i + 1;
         }
     }
     end = str->length;
-    result->data[part] = *string_view_new(str, start, end);
+    result->data[part] = (string_view) {end - start, str->c_str + start};
     return result;
 }

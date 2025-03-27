@@ -25,11 +25,11 @@
 2;Serve meal;
 
 # Stations are defined as follows:
-# ID;Capacity; -> Where capacity is how many operations can wait for that station
+# ID;Capacity;Available from-to; -> Where capacity is how many operations can wait for that station
 @Station
-0;2;
-1;2;
-2;2;
+0;2;8-20;
+1;2;10-20;
+2;2;12-20;
 
 # Optional table to define the names of the stations
 @StationNames
