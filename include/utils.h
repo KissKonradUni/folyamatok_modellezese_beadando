@@ -9,8 +9,8 @@
     #define assert(expr) if (!(expr)) { fprintf(stderr, "Assertion failed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); exit(1); }
     #define assert_warn(expr) if (!(expr)) { printf("Warning: %s; at %s:%d\n", #expr, __FILE__, __LINE__); }
 #else
-    #define assert(expr)
-    #define assert_warn(expr)
+    #define assert(expr) if (!(expr)) { fprintf(stderr, "Error: %s;", #expr); exit(1); }
+    #define assert_warn(expr) if (!(expr)) { printf("Warning: %s;", #expr); }
 #endif
 
 // Math macros
@@ -44,5 +44,13 @@
     #define ON_WINDOWS(expression)
     #define ON_UNIX(expression) expression
 #endif
+
+// ANSI escape codes
+#define ANSI_RESET   "\x1b[0m"
+#define ANSI_BOLD    "\x1b[1m"
+#define ANSI_RED     "\x1b[31m"
+#define ANSI_GREEN   "\x1b[32m"
+#define ANSI_YELLOW  "\x1b[33m"
+#define ANSI_BLUE    "\x1b[94m"
 
 #endif // UTILS_H

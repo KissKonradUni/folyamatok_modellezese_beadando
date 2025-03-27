@@ -20,6 +20,7 @@ typedef void*(array_allocator_fn)(uint32_t len);
 
 #define implArray(type) \
     void* array_allocator_##type(uint32_t len) { \
+        assert(sizeof(type) * len < UINT32_MAX); \
         return alloc_array(type, len); \
     } \
 
@@ -33,7 +34,7 @@ void   array_resize_base(array_allocator_fn allocator, array** array_ref, uint32
 
 #define array(type)                  array_##type
 #define array_new(type, len)         (array_##type*) array_new_base(array_allocator_##type, len)
-#define array_resize(type, arr, len) array_resize_base(array_allocator_##type, arr, len)
+#define array_resize(type, arr, len) array_resize_base(array_allocator_##type, (array**)arr, len)
 #define array_free(arr)              free(arr)
 
 #define foreach(iterator, array) \

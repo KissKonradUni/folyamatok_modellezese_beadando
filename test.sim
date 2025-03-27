@@ -1,38 +1,38 @@
 # The jobs are defined as follows:
-# ID;Operations; -> Where operations are separated by spaces
+# Operations -> Where operations are separated by spaces
 @Jobs
-0;0 1 2;
-1;1 2;
-2;1 2;
+0 1 2
+1 2
+1 1 2
 
-# Optional table to define the names of the jobs
+# Table to define the names of the jobs
 @JobNames
-0;Make a meal;
-1;Cook a frozen meal;
-2;Reheat a meal;
+Make a meal
+Cook a frozen meal
+Reheat a meal
 
 # Operations are defined as follows:
-# ID;Time;Stations; -> Where every usable station is separated by spaces
+# Time;Stations -> Where every usable station is separated by spaces
 @Operations
-0;1;0 1 2;
-1;2;1 2;
-2;3;0 1;
+1;0 1 2
+2;1 2
+3;0 1
 
-# Optional table to define the names of the operations
+# Table to define the names of the operations
 @OperationNames
-0;Get ingredients;
-1;Cook ingredients;
-2;Serve meal;
+Get ingredients
+Cook ingredients
+Serve meal
 
 # Stations are defined as follows:
-# ID;Capacity;Available from-to; -> Where capacity is how many operations can wait for that station
+# Capacity;Available from-to -> Where capacity is how many operations can wait for that station
 @Stations
-0;2;8-20;
-1;2;10-20;
-2;2;12-20;
+2;8-20
+2;10-20
+2;12-20
 
-# Optional table to define the names of the stations
+# Table to define the names of the stations
 @StationNames
-0;Counter;
-1;Oven;
-2;Table;
+Counter
+Oven
+Table
