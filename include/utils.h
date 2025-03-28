@@ -52,5 +52,17 @@
 #define ANSI_GREEN   "\x1b[32m"
 #define ANSI_YELLOW  "\x1b[33m"
 #define ANSI_BLUE    "\x1b[94m"
+#define ANSI_GRAY    "\x1b[90m"
+
+// Input macros
+#define safeInput(count, format, ...) \
+    do { \
+        int returned = scanf(format, __VA_ARGS__); \
+        if (returned != count) { \
+            printf(stderr, "\nError: Expected %d values, but got %d\n", count, returned); \
+        } else { \
+            break; \
+        } \
+    } while (1)
 
 #endif // UTILS_H

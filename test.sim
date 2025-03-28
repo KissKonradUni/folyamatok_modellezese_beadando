@@ -14,9 +14,9 @@ Reheat a meal
 # Operations are defined as follows:
 # Time;Stations -> Where every usable station is separated by spaces
 @Operations
-1;0 1 2
-2;1 2
-3;0 1
+2;0 1 2
+3;1 2
+1;0 1
 
 # Table to define the names of the operations
 @OperationNames
