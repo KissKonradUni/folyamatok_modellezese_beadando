@@ -37,6 +37,7 @@ typedef struct __job {
     uint16_t name_id;
 
     uint16_t id;
+    uint16_t due_time; // 0 - 24
     array(uint16_t)* operations_to_do;
 } job;
 
@@ -45,6 +46,9 @@ defArray(job_ptr);
 
 typedef struct __instance {
     const string_view* input_file;
+
+    uint16_t start_time; // 0 - 24
+    uint16_t end_time;   // 0 - 24
 
     array(string_view)* stn_names;
     array(string_view)* op_names;

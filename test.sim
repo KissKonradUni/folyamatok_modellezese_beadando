@@ -1,9 +1,16 @@
+# Global information
+@Global
+StartTime;6
+EndTime;24
+
+# (These arrive the moment we start)
 # The jobs are defined as follows:
-# Operations -> Where operations are separated by spaces
+# Due to;Operations
+# When the job is due;Operations separated by spaces
 @Jobs
-0 1 2
-1 2
-1 1 2
+13;0 1 2
+14;1 2
+13;1 1 2
 
 # Table to define the names of the jobs
 @JobNames
@@ -25,7 +32,8 @@ Cook ingredients
 Serve meal
 
 # Stations are defined as follows:
-# Capacity;Available from-to -> Where capacity is how many operations can wait for that station
+# Capacity;Available from-to
+# How many can wait for this station; When the station is available in 0-24
 @Stations
 2;8-20
 2;10-20

@@ -2,12 +2,16 @@
 
 const string_view comment          = const_str("#");
 const string_view header           = const_str("@");
+const string_view header_global    = const_str("@Global");
 const string_view header_jobs      = const_str("@Jobs");
 const string_view header_job_names = const_str("@JobNames");
 const string_view header_ops       = const_str("@Operations");
 const string_view header_op_names  = const_str("@OperationNames");
 const string_view header_stns      = const_str("@Stations");
 const string_view header_stn_names = const_str("@StationNames");
+
+const string_view global_start_time = const_str("StartTime");
+const string_view global_end_time   = const_str("EndTime");
 
 implArray(uint16_t);
 implArray(station_ptr);
@@ -37,6 +41,26 @@ implArray(job_ptr);
         line_count++; \
     }
 
+void simulation_process_global(simulation* sim, array(string_view)* lines, uint32_t* index) {
+    COUNT_VALUES();
+    
+    PROCESS_LOOP({
+        if (string_view_starts_with(line, &global_start_time)) {
+            array(string_view)* parts = string_view_split(line, ';');
+            assert(parts->length == 2);
+            int success = sscanf(parts->data[1].c_str, "%hu", &sim->start_time);
+            assert(success == 1);
+        } else if (string_view_starts_with(line, &global_end_time)) {
+            array(string_view)* parts = string_view_split(line, ';');
+            assert(parts->length == 2);
+            int success = sscanf(parts->data[1].c_str, "%hu", &sim->end_time);
+            assert(success == 1);
+        } else {
+            printf("Unknown global parameter: %.*s\n", line->length, line->c_str);
+        }
+    });
+}
+
 void simulation_process_jobs(simulation* sim, array(string_view)* lines, uint32_t* index) {
     COUNT_VALUES();
     
@@ -47,7 +71,13 @@ void simulation_process_jobs(simulation* sim, array(string_view)* lines, uint32_
         job* j = malloc(sizeof(job));
         j->id = line_count;
 
-        array(string_view)* op_ids = string_view_split(line, ' ');
+        array(string_view)* parts = string_view_split(line, ';');
+        assert(parts->length == 2);
+        int success = sscanf(parts->data[0].c_str, "%hu", &j->due_time);
+        assert(success == 1);
+
+        array(string_view)* op_ids = string_view_split(&parts->data[1], ' ');
+        assert(op_ids->length > 0);
         j->operations_to_do = array_new(uint16_t, op_ids->length);
         foreach(k, op_ids) {
             uint16_t op_id;
@@ -164,6 +194,7 @@ void simulation_process_lines(simulation* sim, array(string_view)* lines) {
         if (!string_view_starts_with(line, &header))
             continue;
 
+        PROCESS_HEADER(global);
         PROCESS_HEADER(jobs);
         PROCESS_HEADER(job_names);
         PROCESS_HEADER(ops);
@@ -195,20 +226,24 @@ simulation* simulation_new(const string_view* input_file) {
 
 void simulation_print_fix_data(simulation *sim) {
     // Print the data
-    printf("> %sStations%s:\n", ANSI_GREEN, ANSI_RESET);
-    printf("  | ID | Name            | Cap | Avail.  |\n");
-    printf("  |----|-----------------|-----|---------|\n");
+    printf("> %sGlobal parameters%s:\n", ANSI_GREEN, ANSI_RESET);
+    printf("  | Start time | %02hu |\n", sim->start_time);
+    printf("  | End time   | %02hu |\n", sim->end_time);
+
+    printf("\n> %sStations%s:\n", ANSI_GREEN, ANSI_RESET);
+    printf("  | ID | Name            | Cap. | Avail.  |\n");
+    printf("  |----|-----------------|------|---------|\n");
     foreach(i, sim->stations) {
         station* stn = sim->stations->data[i];
-        printf("  | %02hu | %-16.*s| %3hu | %02hu - %02hu |\n", i, sim->stn_names->data[stn->name_id].length, sim->stn_names->data[stn->name_id].c_str, stn->wait_capacity, stn->available_from, stn->available_to);
+        printf("  | %02hu | %-16.*s|  %02hu  | %02hu - %02hu |\n", i, sim->stn_names->data[stn->name_id].length, sim->stn_names->data[stn->name_id].c_str, stn->wait_capacity, stn->available_from, stn->available_to);
     }
 
     printf("\n> %sOperations%s:\n", ANSI_GREEN, ANSI_RESET);
-    printf("  | ID | Name                    | Dur | Stations...\n");
-    printf("  |----|-------------------------|-----|-------------\n");
+    printf("  | ID | Name                    | Dur. | Stations...\n");
+    printf("  |----|-------------------------|------|-------------\n");
     foreach(i, sim->operations) {
         operation* op = sim->operations->data[i];
-        printf("  | %02hu | %-24.*s| %3hu | ", i, sim->op_names->data[op->name_id].length, sim->op_names->data[op->name_id].c_str, op->duration);
+        printf("  | %02hu | %-24.*s|  %02hu  | ", i, sim->op_names->data[op->name_id].length, sim->op_names->data[op->name_id].c_str, op->duration);
         foreach(j, op->can_be_done_at) {
             printf("%02hu", op->can_be_done_at->data[j]);
             if (j < op->can_be_done_at->length - 1)
@@ -218,11 +253,11 @@ void simulation_print_fix_data(simulation *sim) {
     }
 
     printf("\n> %sJobs%s:\n", ANSI_GREEN, ANSI_RESET);
-    printf("  | ID | Operations...\n");
-    printf("  |----|---------------\n");
+    printf("  | ID | Due to | Operations...\n");
+    printf("  |----|--------|---------------\n");
     foreach(i, sim->jobs) {
         job* j = sim->jobs->data[i];
-        printf("  | %02hu | ", i);
+        printf("  | %02hu |   %02hu   | ", i, j->due_time);
         foreach(k, j->operations_to_do) {
             printf("%02hu", j->operations_to_do->data[k]);
             if (k < j->operations_to_do->length - 1)
