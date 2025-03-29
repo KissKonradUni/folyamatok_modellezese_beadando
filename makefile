@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -std=c23
 MODE?=debug
 DEBUGFLAGS = -g -O0 -Ddebug
 RELEASEFLAGS = -O3 -lto -Drelease
-FASTFLAGS = -Ofast -flto
+FASTFLAGS = -O3 -ffast-math -flto -Wno-unused -Dfast
 
 ifeq ($(MODE),debug)
 	CFLAGS += $(DEBUGFLAGS)

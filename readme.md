@@ -1,10 +1,10 @@
-# Folyamatok modellezése szimulátor
+# ⚙️ Diszkrét folyamat szimulátor
 
-![C](https://img.shields.io/badge/-00599C?style=for-the-badge&logo=c&logoColor=white) ![makefile](https://img.shields.io/badge/-makefile-ff6600?style=for-the-badge&logo=makefile&logoColor=white) ![Version](https://img.shields.io/badge/Version-0.1.0-blue?style=for-the-badge&logo=Version&logoColor=white) ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=License&logoColor=white)
+![C](https://img.shields.io/badge/c23-00599C?style=for-the-badge&logo=c&logoColor=white) ![makefile](https://img.shields.io/badge/-makefile-ff6600?style=for-the-badge&logo=makefile&logoColor=white) ![Version](https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge&logo=Version&logoColor=white) ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=License&logoColor=white) [![Download](https://img.shields.io/badge/Download-releases-blue?style=for-the-badge&logo=Version&logoColor=white)](/releases)
 
-> Készítette: Kiss Konrád Soma (CNY8MP)
+> Készítette: 👨‍💻 Kiss Konrád Soma (CNY8MP)
 
-## Feladat
+## 🎯 Feladat
 
 > Forrás: [Link](https://mandarin.iit.uni-miskolc.hu/iitkgy/do/FM_2025/Feladat/FM_feladat_2025.pdf)
 
@@ -23,30 +23,58 @@ Célszerűen választott fejlesztői környezetben készítsen számítógépi p
 
 A feladat megoldásához felhasználhatók a tantárgy előadásain és gyakorlatain bemutatott modellek, megoldási módszerek és algoritmusok. Mintapéldákon keresztül mutassa be az implementált szoftver működését!
 
-## Megvalósítás
+## 💻 Megvalósítás
 
-...
+A projekt jelenleg egy First Come First Served (FCFS) ütemezési algoritmust valósít meg, amely a legkorábban érkező munkát dolgozza fel először.
+Jelenleg ez az egyetlen egy van kivitelezve.
+Az eredményt a terminálban szöveges formában jeleníti meg.
+
+### 🏛️ Architektúra
+
+A program moduláris felépítésű, több komponensből áll:
+
+- `simulation.c` - A szimulációs modell alapjait tartalmazza (munkák, műveletek, állomások)
+- `scheduler.c` - Az ütemezési algoritmus(ok)at és a szimuláció logikáját valósítja meg
+- `array.c`, `mystring.c`, `file.c` - Segédmodulok a dinamikus memóriakezeléshez és fájlműveletekhez
+
+### 🛠️ A szimuláció működése
+
+A program egy fájlból olvassa be a szimulációs paramétereket, amely tartalmazza a munkák, műveletek és állomások adatait. Ezek mind diszkrét értékekkel vannak megadva, minden időpont pedig percben (0-1440) van megadva.
+
+A szimuláció diszkrét lépésekben (percenként) halad, és minden egyes lépésben ellenőrzi, hogy van-e új munka, amelyet el kell kezdeni, vagy van-e olyan munka, amely befejeződött. Az ütemezési algoritmus alapján a program kiválasztja a következő munkát, amelyet végrehajtani kell.
+
+### 🖼️ Képernyőképek
+
+Egy beolvasott fájl által kiírt adatok:
+![Parsed file](./extra/parsing.webp)
+
+Az eredmény futás után:
+![Result](./extra/fcfs_result.webp)
+
+### ✅ Elért eredmények
+
+Jelenlegi formályában a program a "Jó" szintű feladatot célozza meg.
 
 A projekt elvileg képes windows és linux rendszereken is futni, de a tesztelés többségét linux alatt végeztem.
 
-## Klónozás
+## 📦 Klónozás
 
 ```bash
 git clone https://github.com/KissKonradUni/folyamatok_modellezese_beadando.git
 ```
 
-## Fordítás
+## 🔨 Fordítás
 
 ```bash
 make
 ```
 
-## Futtatás
+## 🚀 Futtatás
 
 ```bash
 ./bin/simulator[.exe]
 ```
 
-## Licensz
+## 📜 Licensz
 
 A projekt az [MIT Licensz](./license.txt) alatt érhető el.
