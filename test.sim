@@ -1,16 +1,17 @@
 # Global information
+# Set in minutes
 @Global
-StartTime;6
-EndTime;24
+StartTime;360
+EndTime;1200
 
 # (These arrive the moment we start)
 # The jobs are defined as follows:
 # Due to;Operations
 # When the job is due;Operations separated by spaces
 @Jobs
-13;0 1 2
-14;1 2
-13;1 1 2
+900;0 1 2
+960;1 2
+1020;1 1 3 3 3
 
 # Table to define the names of the jobs
 @JobNames
@@ -21,26 +22,30 @@ Reheat a meal
 # Operations are defined as follows:
 # Time;Stations -> Where every usable station is separated by spaces
 @Operations
-2;0 1 2
-3;1 2
-1;0 1
+20;0 1 2
+30;1 2
+10;3
+480;0
 
 # Table to define the names of the operations
 @OperationNames
 Get ingredients
 Cook ingredients
 Serve meal
+Gurantee to be late
 
 # Stations are defined as follows:
 # Capacity;Available from-to
 # How many can wait for this station; When the station is available in 0-24
 @Stations
-2;8-20
-2;10-20
-2;12-20
+2;480-1200
+1;540-1200
+1;540-1200
+2;600-1200
 
 # Table to define the names of the stations
 @StationNames
 Counter
-Oven
+Oven A
+Oven B
 Table

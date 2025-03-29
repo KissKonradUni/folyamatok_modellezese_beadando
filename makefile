@@ -6,11 +6,16 @@ CFLAGS = -Wall -Wextra -std=c23
 MODE?=debug
 DEBUGFLAGS = -g -O0 -Ddebug
 RELEASEFLAGS = -O3 -lto -Drelease
+FASTFLAGS = -Ofast -flto
 
 ifeq ($(MODE),debug)
 	CFLAGS += $(DEBUGFLAGS)
-else
+else ifeq ($(MODE),release)
 	CFLAGS += $(RELEASEFLAGS)
+else ifeq ($(MODE),fast)
+	CFLAGS += $(FASTFLAGS)
+else
+	$(error Invalid mode: $(MODE))
 endif
 
 TARGET = main

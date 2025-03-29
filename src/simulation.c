@@ -235,23 +235,23 @@ simulation* simulation_new(const string_view* input_file) {
 void simulation_print_fix_data(simulation *sim) {
     // Print the data
     printf("> %sGlobal parameters%s:\n", ANSI_GREEN, ANSI_RESET);
-    printf("  | Start time | %02hu |\n", sim->start_time);
-    printf("  | End time   | %02hu |\n", sim->end_time);
+    printf("  | Start time | %02hu:%02hu |\n", min_to_time(sim->start_time));
+    printf("  | End time   | %02hu:%02hu |\n", min_to_time(sim->end_time));
 
     printf("\n> %sStations%s:\n", ANSI_GREEN, ANSI_RESET);
-    printf("  | ID | Name            | Cap. | Avail.  |\n");
-    printf("  |----|-----------------|------|---------|\n");
+    printf("  | ID | Name                    | Cap. | Availability  |\n");
+    printf("  |----|-------------------------|------|---------------|\n");
     foreach(i, sim->stations) {
         station* stn = sim->stations->data[i];
-        printf("  | %02hu | %-16.*s|  %02hu  | %02hu - %02hu |\n", i, sim->stn_names->data[stn->name_id].length, sim->stn_names->data[stn->name_id].c_str, stn->wait_capacity, stn->available_from, stn->available_to);
+        printf("  | %02hu | %-24.*s|  %02hu  | %02hu:%02hu - %02hu:%02hu |\n", i, sim->stn_names->data[stn->name_id].length, sim->stn_names->data[stn->name_id].c_str, stn->wait_capacity, min_to_time(stn->available_from), min_to_time(stn->available_to));
     }
 
     printf("\n> %sOperations%s:\n", ANSI_GREEN, ANSI_RESET);
-    printf("  | ID | Name                    | Dur. | Stations...\n");
-    printf("  |----|-------------------------|------|-------------\n");
+    printf("  | ID | Name                    | Duration | Stations...\n");
+    printf("  |----|-------------------------|----------|-------------\n");
     foreach(i, sim->operations) {
         operation* op = sim->operations->data[i];
-        printf("  | %02hu | %-24.*s|  %02hu  | ", i, sim->op_names->data[op->name_id].length, sim->op_names->data[op->name_id].c_str, op->duration);
+        printf("  | %02hu | %-24.*s|    %02hu:%02hu | ", i, sim->op_names->data[op->name_id].length, sim->op_names->data[op->name_id].c_str, min_to_time(op->duration));
         foreach(j, op->can_be_done_at) {
             printf("%02hu", op->can_be_done_at->data[j]);
             if (j < op->can_be_done_at->length - 1)
@@ -265,7 +265,7 @@ void simulation_print_fix_data(simulation *sim) {
     printf("  |----|--------|---------------\n");
     foreach(i, sim->jobs) {
         job* j = sim->jobs->data[i];
-        printf("  | %02hu |   %02hu   | ", i, j->due_time);
+        printf("  | %02hu |  %02hu:%02hu | ", i, min_to_time(j->due_time));
         foreach(k, j->operations_to_do) {
             printf("%02hu", j->operations_to_do->data[k]);
             if (k < j->operations_to_do->length - 1)

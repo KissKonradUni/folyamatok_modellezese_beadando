@@ -59,7 +59,8 @@ int main(int argc, char** argv) {
     simulation_print_fix_data(sim);
 
     scheduler* sch = scheduler_new(sim);
-    // scheduler_simulate_fcfs(sch);
+    scheduler_simulate_fcfs(sch);
+    scheduler_print_results(sch);
     scheduler_free(sch);
 
     simulation_free(sim);

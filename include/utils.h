@@ -6,15 +6,20 @@
 #include <signal.h>
 
 // Assertation macros
-#if defined (debug) && !defined (release)
+#if defined (debug)
     #ifndef SIGTRAP
         #define SIGTRAP SIGABRT
     #endif
     #define assert(expr) if (!(expr)) { fprintf(stderr, "Assertion failed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); raise(SIGTRAP); }
     #define assert_warn(expr) if (!(expr)) { printf("Warning: %s; at %s:%d\n", #expr, __FILE__, __LINE__); }
 #else
-    #define assert(expr) if (!(expr)) { fprintf(stderr, "Error: %s;", #expr); exit(1); }
-    #define assert_warn(expr) if (!(expr)) { printf("Warning: %s;", #expr); }
+    #if defined (release)
+        #define assertexpr) if (!(expr)) { fprintf(stderr, "Error: %s;", #expr); exit(1); }
+        #define assert_warn(expr) if (!(expr)) { printf("Warning: %s;", #expr); }
+    #else // Fast mode (non-debuggable)
+        #define assert(expr)
+        #define assert_warn(expr)
+    #endif
 #endif
 
 // Math macros
@@ -49,7 +54,7 @@
     #define ON_UNIX(expression) expression
 #endif
 
-// ANSI escape codes
+// Text macros
 #define ANSI_RESET   "\x1b[0m"
 #define ANSI_BOLD    "\x1b[1m"
 #define ANSI_RED     "\x1b[31m"
@@ -58,15 +63,6 @@
 #define ANSI_BLUE    "\x1b[94m"
 #define ANSI_GRAY    "\x1b[90m"
 
-// Input macros
-#define safeInput(count, format, ...) \
-    do { \
-        int returned = scanf(format, __VA_ARGS__); \
-        if (returned != count) { \
-            printf(stderr, "\nError: Expected %d values, but got %d\n", count, returned); \
-        } else { \
-            break; \
-        } \
-    } while (1)
+#define min_to_time(x) (x) / 60, (x) % 60
 
 #endif // UTILS_H

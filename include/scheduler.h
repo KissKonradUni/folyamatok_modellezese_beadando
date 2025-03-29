@@ -22,14 +22,22 @@ typedef struct __active_job {
 typedef active_job* active_job_ptr;
 defArray(active_job_ptr);
 
+typedef enum : uint8_t {
+    STATION_IDLE,       // Station is idle
+    STATION_BUSY,       // Station is busy processing a job
+    STATION_FULL,       // Station is full (queue is full)
+    STATION_UNAVAILABLE // Station is unavailable
+} station_state;
+
 /**
  * Stores information about a station
  * that is currently processing an operation.
  * (In the current iteration of the simulation)
  */
 typedef struct __station_queue {
-    station*               station; // Pointer to the station that the queue belongs to
-    array(active_job_ptr)* jobs;    // Pointer to the queue of jobs that are waiting to be processed
+    station*               station;    // Pointer to the station that the queue belongs to
+    active_job*            job;        // Pointer to the job that is being processed
+    array(active_job_ptr)* jobs_queue; // Pointer to the queue of jobs that are waiting to be processed
 } station_queue;
 
 typedef station_queue* station_queue_ptr;
@@ -67,8 +75,6 @@ typedef struct __job_history {
     
     uint16_t finished_time;               // Time when the job was finished
     uint16_t tardiness;                   // How late the job was (finished_time - due_time)
-    uint16_t waiting_time;                // How long the job waited in the queue
-    uint16_t processing_time;             // How long the job was being processed
 } job_history;
 
 typedef job_history* job_history_ptr;
@@ -88,9 +94,6 @@ typedef struct __station_history {
                                           // (Might contain NULL)
 
     uint16_t busy_time;                   // Time spent processing jobs
-    uint16_t idle_time;                   // Time spent idle
-    uint16_t out_time;                    // Time spent unavailable
-    float utilization;                    // Utilization of the station
 } station_history;
 
 typedef station_history* station_history_ptr;
@@ -114,10 +117,10 @@ typedef struct __scheduler {
     uint16_t end_time;                               // End time of the last job       (0 - 24)
 
     uint16_t longest_tardiness;                      // How late was the most tardy job
-    uint16_t longest_waiting_time;                   // The longest waiting time of a job
+    //uint16_t longest_waiting_time;                   // The longest waiting time of a job
 
     uint16_t total_tardiness;                        // The total tardiness of all jobs
-    uint16_t total_waiting_time;                     // The total waiting time of all jobs
+    //uint16_t total_waiting_time;                     // The total waiting time of all jobs
 
     uint16_t tardy_jobs;                             // The number of tardy jobs (tardiness > 0)
 
@@ -143,5 +146,13 @@ void scheduler_free(scheduler* sch);
  * @param sch Pointer to the scheduler object
  */
 void scheduler_simulate_fcfs(scheduler* sch);
+
+/**
+ * @brief Prints the results of the scheduler simulation
+ *        including statistics and execution records.
+ * 
+ * @param sch Pointer to the scheduler object
+ */
+ void scheduler_print_results(scheduler* sch);
 
 #endif // SCHEDULER_H
