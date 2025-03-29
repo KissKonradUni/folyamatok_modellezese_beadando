@@ -3,6 +3,7 @@
 
 #include "file.h"
 #include "mystring.h"
+#include "scheduler.h"
 #include "simulation.h"
 
 int main(int argc, char** argv) {
@@ -56,6 +57,11 @@ int main(int argc, char** argv) {
 
     simulation* sim = simulation_new(&str->as_view);
     simulation_print_fix_data(sim);
+
+    scheduler* sch = scheduler_new(sim);
+    // scheduler_simulate_fcfs(sch);
+    scheduler_free(sch);
+
     simulation_free(sim);
 
     // Wait for user input

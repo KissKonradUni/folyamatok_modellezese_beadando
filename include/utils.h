@@ -3,10 +3,14 @@
 
 #include <stdio.h>  // IWYU pragma: keep (it is used in the assert macro)
 #include <stdlib.h> // IWYU pragma: keep (it is used in the assert macro)
+#include <signal.h>
 
 // Assertation macros
 #if defined (debug) && !defined (release)
-    #define assert(expr) if (!(expr)) { fprintf(stderr, "Assertion failed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); exit(1); }
+    #ifndef SIGTRAP
+        #define SIGTRAP SIGABRT
+    #endif
+    #define assert(expr) if (!(expr)) { fprintf(stderr, "Assertion failed: %s; at %s:%d\n", #expr, __FILE__, __LINE__); raise(SIGTRAP); }
     #define assert_warn(expr) if (!(expr)) { printf("Warning: %s; at %s:%d\n", #expr, __FILE__, __LINE__); }
 #else
     #define assert(expr) if (!(expr)) { fprintf(stderr, "Error: %s;", #expr); exit(1); }

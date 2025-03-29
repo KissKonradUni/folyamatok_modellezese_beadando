@@ -13,6 +13,7 @@ typedef struct __active_job {
 
     uint16_t current_operation_id; // ID of the operation that is currently being processed
     uint16_t operation_ends_at;    // start_time + duration
+                                   // (UINT16_MAX if the job is not being processed)
     
     station* assigned_station;     // Pointer to the station that is processing the job
                                    // (May be NULL if the job is not being processed)
@@ -54,14 +55,17 @@ defArray(execution_record_ptr);
 /**
  * Stores information about the history of
  * a job throughout the simulation.
+ * @remark Some values might have UINT16_MAX as value
+ *         if the job is yet to be processed.
  */
 typedef struct __job_history {
     uint16_t job_id;                      // ID of the job
 
     array(execution_record_ptr)* records; // Pointer to the list of execution records
                                           // that belong to this job
+                                          // (Might contain NULL)
     
-    uint16_t finished_time;               // Time when the job was finished (UINT16_MAX if not finished)
+    uint16_t finished_time;               // Time when the job was finished
     uint16_t tardiness;                   // How late the job was (finished_time - due_time)
     uint16_t waiting_time;                // How long the job waited in the queue
     uint16_t processing_time;             // How long the job was being processed
@@ -73,12 +77,15 @@ defArray(job_history_ptr);
 /**
  * Stores information about the history of
  * a station throughout the simulation.
+ * @remark Some values might have UINT16_MAX as value
+ *         if the station is yet to be processed.
  */
 typedef struct __station_history {
     uint16_t station_id;                  // ID of the station
 
     array(execution_record_ptr)* records; // Pointer to the list of execution records
                                           // that belong to this station
+                                          // (Might contain NULL)
 
     uint16_t busy_time;                   // Time spent processing jobs
     uint16_t idle_time;                   // Time spent idle
@@ -119,9 +126,22 @@ typedef struct __scheduler {
     array(active_job_ptr)*    active_jobs;           // Pointer to the list of active jobs
 
     // Gannt chart data
+    uint16_t record_count;                           // Number of records in the execution records
+                                                     // (The array itself is larger and dynamically resized)
     array(execution_record_ptr)* execution_records;  // Pointer to the list of execution records
     array(job_history_ptr)*      job_histories;      // Pointer to the list of job histories
     array(station_history_ptr)*  station_histories;  // Pointer to the list of station histories
 } scheduler;
+
+scheduler* scheduler_new(simulation* sim);
+void scheduler_free(scheduler* sch);
+
+/**
+ * @brief Simulates the scheduler using the
+ * First-Come-First-Serve (FCFS) algorithm.
+ * (aka. FIFO)
+ * @param sch Pointer to the scheduler object
+ */
+void scheduler_simulate_fcfs(scheduler* sch);
 
 #endif // SCHEDULER_H

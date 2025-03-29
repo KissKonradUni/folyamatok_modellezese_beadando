@@ -50,11 +50,13 @@ void simulation_process_global(simulation* sim, array(string_view)* lines, uint3
             assert(parts->length == 2);
             int success = sscanf(parts->data[1].c_str, "%hu", &sim->start_time);
             assert(success == 1);
+            array_free(parts);
         } else if (string_view_starts_with(line, &global_end_time)) {
             array(string_view)* parts = string_view_split(line, ';');
             assert(parts->length == 2);
             int success = sscanf(parts->data[1].c_str, "%hu", &sim->end_time);
             assert(success == 1);
+            array_free(parts);
         } else {
             printf("Unknown global parameter: %.*s\n", line->length, line->c_str);
         }
@@ -88,6 +90,9 @@ void simulation_process_jobs(simulation* sim, array(string_view)* lines, uint32_
 
         j->name_id = line_count;
         sim->jobs->data[line_count] = j;
+
+        array_free(parts);
+        array_free(op_ids);
     });
 }
 
@@ -130,6 +135,9 @@ void simulation_process_ops(simulation* sim, array(string_view)* lines, uint32_t
 
         op->name_id = line_count;
         sim->operations->data[line_count] = op;
+
+        array_free(parts);
+        array_free(stn_ids);
     });
 }
 
@@ -268,8 +276,22 @@ void simulation_print_fix_data(simulation *sim) {
 }
 
 void simulation_free(simulation* sim) {
+    foreach(i, sim->jobs) {
+        job* j = sim->jobs->data[i];
+        array_free(j->operations_to_do);
+        free(j);
+    } 
     array_free(sim->jobs);
+    foreach(i, sim->operations) {
+        operation* op = sim->operations->data[i];
+        array_free(op->can_be_done_at);
+        free(op);
+    }
     array_free(sim->operations);
+    foreach(i, sim->stations) {
+        station* stn = sim->stations->data[i];
+        free(stn);
+    }
     array_free(sim->stations);
     
     array_free(sim->job_names);
