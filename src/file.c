@@ -28,7 +28,7 @@ string* read_all_lines(FILE* file) {
         // that fgets adds to the end of every line.
         // This does mean that we allocate an extra byte for every line.
         ON_WINDOWS(
-            str->length = ftell(file) - (lineIndex++);
+            result->length = ftell(file) - (lineIndex++);
         );
         ON_UNIX(
             result->length = ftell(file);

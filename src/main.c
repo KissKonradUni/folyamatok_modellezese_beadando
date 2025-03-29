@@ -8,7 +8,7 @@
 int main(int argc, char** argv) {
     // Print header
     printf("%s%s  Discrete process simulation  %s\n", ANSI_BOLD, ANSI_YELLOW, ANSI_RESET);
-    printf("  by %sKonrád Soma Kiss%s, %sCNY8MP%s  \n\n", ANSI_YELLOW, ANSI_RESET, ANSI_YELLOW, ANSI_RESET);
+    printf("  by %sKonrad Soma Kiss%s, %sCNY8MP%s  \n\n", ANSI_YELLOW, ANSI_RESET, ANSI_YELLOW, ANSI_RESET);
 
     // Ask for input file
     string* filename = string_new(PATH_MAX);
