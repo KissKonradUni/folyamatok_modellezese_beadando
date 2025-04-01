@@ -1,6 +1,6 @@
 # ⚙️ Diszkrét folyamat szimulátor
 
-![C](https://img.shields.io/badge/c23-00599C?style=for-the-badge&logo=c&logoColor=white) ![makefile](https://img.shields.io/badge/-makefile-ff6600?style=for-the-badge&logo=makefile&logoColor=white) ![Version](https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge&logo=Version&logoColor=white) ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=License&logoColor=white) [![Download](https://img.shields.io/badge/Download-releases-blue?style=for-the-badge&logo=Version&logoColor=white)](/releases)
+![C](https://img.shields.io/badge/c23-00599C?style=for-the-badge&logo=c&logoColor=white) ![makefile](https://img.shields.io/badge/-makefile-ff6600?style=for-the-badge&logo=makefile&logoColor=white) ![Version](https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge&logo=Version&logoColor=white) ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=License&logoColor=white) [![Download](https://img.shields.io/badge/Download-releases-blue?style=for-the-badge&logo=Version&logoColor=white)](https://github.com/KissKonradUni/folyamatok_modellezese_beadando/releases)
 
 > Készítette: 👨‍💻 Kiss Konrád Soma (CNY8MP)
 
@@ -73,6 +73,9 @@ make
 
 ```bash
 ./bin/simulator[.exe]
+# Példák:
+# test.sim - Egyszerű példa amely helyesen lefut
+# late.sim - Garantáltan elkéső példa ami zárás előtt nem készül el
 ```
 
 ## 📜 Licensz

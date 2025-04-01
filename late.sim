@@ -11,7 +11,7 @@ EndTime;1200
 @Jobs
 900;0 1 2
 960;1 2
-1020;1 1
+1020;1 1 3 3 3
 
 # Table to define the names of the jobs
 @JobNames
@@ -25,12 +25,14 @@ Reheat a meal
 20;0 1 2
 30;1 2
 10;3
+480;0
 
 # Table to define the names of the operations
 @OperationNames
 Get ingredients
 Cook ingredients
 Serve meal
+Be late
 
 # Stations are defined as follows:
 # Capacity;Available from-to

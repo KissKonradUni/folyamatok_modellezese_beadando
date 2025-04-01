@@ -543,7 +543,7 @@ void scheduler_print_results(scheduler* sch) {
             color_end = ANSI_RESET;
         }
         
-        printf("  | %2d | %-23.*s |    %02hu:%02hu | %s%13s%s | %9d |\n", 
+        printf("  | %2d | %-23.*s |    %02hu:%02hu | %s%13s%s |     %02hu:%02hu |\n", 
             job->id, 
             (int)sch->sim->job_names->data[job->name_id].length,
             sch->sim->job_names->data[job->name_id].c_str,
@@ -551,7 +551,7 @@ void scheduler_print_results(scheduler* sch) {
             color_start,
             completed_str,
             color_end,
-            history->tardiness
+            min_to_time(history->tardiness)
         );
     }
     
@@ -589,20 +589,25 @@ void scheduler_print_results(scheduler* sch) {
             
         uint16_t duration = record->end_time - record->start_time;
         
-        char end_time_text[20] = " -  ";
+        char end_time_text[6] = " -  ";
+        char duration_text[9] = "       -";
         if (record->end_time != UINT16_MAX) {
             snprintf(end_time_text, sizeof(end_time_text), "%02hu:%02hu", 
                 min_to_time(record->end_time)
             );
+            snprintf(duration_text, sizeof(duration_text), "%02hu:%02hu", 
+                min_to_time(duration)
+            );
         }
 
-        printf("  |  %5d | %12d | %10d | %02hu:%02hu | %5s | %8d |",
+        printf("  |  %5d | %12d | %10d | %02hu:%02hu | %5s | %8s |",
             record->job_id,
             record->op_id,
             record->station_id,
             min_to_time(record->start_time),
             end_time_text,
-            duration);
+            duration_text
+        );
         printf(" Do %s%-23.*s%s's %s%23.*s%s at %s%.*s%s\n",
             ANSI_YELLOW,
             sch->sim->job_names->data[record->job_id].length,
