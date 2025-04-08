@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 
     // Ask for input file
     string* filename = string_new(PATH_MAX);
-    printf("  (%sIf not provided, %s\"./test.sim\"%s will be used%s)\n", ANSI_YELLOW, ANSI_GRAY, ANSI_YELLOW, ANSI_RESET);
+    printf("  (%sIf not provided, %s\"examples%stest.sim\"%s will be used%s)\n", ANSI_YELLOW, ANSI_GRAY, PATH_DELIMITER_STR, ANSI_YELLOW, ANSI_RESET);
     printf("- %sSimulation file%s: ", ANSI_BLUE, ANSI_RESET);
     while (true) {
         fgets(filename->c_str, filename->capacity, stdin);
