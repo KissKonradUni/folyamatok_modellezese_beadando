@@ -26,8 +26,10 @@ int main(int argc, char** argv) {
     
         // Check if the input is empty
         if (filename->length == 0) {
-            printf("- %sWarning%s: Empty input. Treating as \"./test.sim\"\n", ANSI_YELLOW, ANSI_RESET);
-            string_append_cstr(&filename, "./test.sim");
+            printf("- %sWarning%s: Empty input. Treating as \"examples%stest.sim\"\n", ANSI_YELLOW, ANSI_RESET, PATH_DELIMITER_STR);
+            string_append_cstr(&filename, "examples");
+            string_append_char(&filename, PATH_DELIMITER);
+            string_append_cstr(&filename, "test.sim");
         }
         // Check if the input is a valid file
         if (filename->length > 1) {
