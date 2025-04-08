@@ -575,14 +575,17 @@ void scheduler_print_results(scheduler* sch) {
                station_utilization);
     }
     
-    // Print Gantt chart (simplified version)
+    // Print operation history
     printf("\n> %sOperation history%s:\n", ANSI_BLUE, ANSI_RESET);
     printf("  | Job ID | Operation ID | Station ID | Start |  End  | Duration | Description...\n");
     printf("  |--------|--------------|------------|-------|-------|----------|----------------\n");
     
     for (int i = 0; i < sch->record_count; i++) {
         execution_record* record = sch->execution_records->data[i];
-        
+        uint16_t job_id = record->job_id;
+        uint16_t op_id  = sch->sim->jobs->data[job_id]->operations_to_do->data[record->op_id];
+        uint16_t stn_id = record->station_id;
+
         // Skip incomplete records
         if (record == NULL)
             continue;
@@ -601,25 +604,25 @@ void scheduler_print_results(scheduler* sch) {
         }
 
         printf("  |  %5d | %12d | %10d | %02hu:%02hu | %5s | %8s |",
-            record->job_id,
-            record->op_id,
-            record->station_id,
+            job_id,
+            op_id,
+            stn_id,
             min_to_time(record->start_time),
             end_time_text,
             duration_text
         );
         printf(" Do %s%-23.*s%s's %s%23.*s%s at %s%.*s%s\n",
             ANSI_YELLOW,
-            sch->sim->job_names->data[record->job_id].length,
-            sch->sim->job_names->data[record->job_id].c_str,
+            sch->sim->job_names->data[job_id].length,
+            sch->sim->job_names->data[job_id].c_str,
             ANSI_RESET,
             ANSI_YELLOW,
-            sch->sim->op_names->data[record->op_id].length,
-            sch->sim->op_names->data[record->op_id].c_str,
+            sch->sim->op_names->data[op_id].length,
+            sch->sim->op_names->data[op_id].c_str,
             ANSI_RESET,
             ANSI_YELLOW,
-            sch->sim->stn_names->data[record->station_id].length,
-            sch->sim->stn_names->data[record->station_id].c_str,
+            sch->sim->stn_names->data[stn_id].length,
+            sch->sim->stn_names->data[stn_id].c_str,
             ANSI_RESET
         );
     }
